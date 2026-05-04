@@ -18,10 +18,14 @@ This repository contains my work from a Data Science Internship.
 - Level 1, 2, 3 Reports
 
 📊 Visualizations
-![Rating](images/(7)distribution of ratings.png)
-![Rating](images/(10)top rated cuisines.png)
-![Rating](images/(11)votes vs ratings.png)
-![Rating](images/(13)price range vs ratings.png)
+
+![Rating](images/7ratings.png)
+
+![Rating](images/10toprated.png)
+
+![Rating](images/11votes.png)
+
+![Rating](images/13pricerange.png)
 
 ## 🙋‍♂️ Author
 Biman
