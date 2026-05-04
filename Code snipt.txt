@@ -1,0 +1,340 @@
+import pandas as pd
+
+df = pd.read_csv("Dataset.csv")
+
+# Clean column names
+df.columns = df.columns.str.strip()
+
+# FIX (correct way)
+df['Cuisines'] = df['Cuisines'].fillna("Unknown")
+
+# Check again
+print(df['Cuisines'].isnull().sum())
+
+# Check full info again
+df.info()
+
+df['Aggregate rating'].describe()
+df['Aggregate rating'].value_counts()
+print(df['Aggregate rating'].describe())
+print(df['Aggregate rating'].value_counts())
+
+# ----------TASK - 1 ENDS HERE----------
+
+# ----------TASK - 2 STARTS HERE----------
+
+print("\n--- Numerical Summary ---")
+num_df = df.select_dtypes(include=['int64', 'float64'])
+
+print("Mean:\n", num_df.mean())
+print("\nMedian:\n", num_df.median())
+print("\nStandard Deviation:\n", num_df.std())
+
+print("\n--- Top Cities ---")
+print(df['City'].value_counts().head(10))
+
+print("\n--- Top Cuisines ---")
+df['Cuisines'] = df['Cuisines'].str.split(', ')
+cuisines_exploded = df.explode('Cuisines')
+print(cuisines_exploded['Cuisines'].value_counts().head(10))
+# ----------TASK - 2 ENDS HERE----------
+
+# ----------TASK - 3 STARTS HERE----------
+
+import matplotlib.pyplot as plt
+# ---------- PART 1: Restaurant Locations ----------
+print("\n--- Restaurant Locations (Scatter Plot) ---")
+plt.figure(figsize=(8,6))
+plt.scatter(df['Longitude'], df['Latitude'])
+plt.title("Restaurant Locations")
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+plt.show()
+# ---------- PART 2: Top Cities Distribution ----------
+print("\n--- Top 10 Cities with Most Restaurants ---")
+top_cities = df['City'].value_counts().head(10)
+print(top_cities)
+plt.figure(figsize=(8,6))
+top_cities.plot(kind='bar')
+plt.title("Top 10 Cities with Most Restaurants")
+plt.xlabel("City")
+plt.ylabel("Number of Restaurants")
+plt.xticks(rotation=45)
+plt.show()
+# ---------- PART 3: Location vs Rating ----------
+print("\n--- Longitude vs Aggregate Rating ---")
+plt.figure(figsize=(8,6))
+plt.scatter(df['Longitude'], df['Aggregate rating'])
+plt.title("Longitude vs Aggregate Rating")
+plt.xlabel("Longitude")
+plt.ylabel("Aggregate Rating")
+plt.show()
+print("\n--- Latitude vs Aggregate Rating ---")
+plt.figure(figsize=(8,6))
+plt.scatter(df['Latitude'], df['Aggregate rating'])
+plt.title("Latitude vs Aggregate Rating")
+plt.xlabel("Latitude")
+plt.ylabel("Aggregate Rating")
+plt.show()
+
+#----------LEVEL 1 ENDS HERE----------
+
+# ==============================
+# LEVEL 2 - TASK 1
+# Table Booking & Online Delivery
+# ==============================
+
+# ---------- PART 1: Percentage ----------
+print("\n--- Percentage of Services ---")
+
+total = len(df)
+
+table_booking_percent = (df['Has Table booking'].value_counts(normalize=True) * 100)
+online_delivery_percent = (df['Has Online delivery'].value_counts(normalize=True) * 100)
+
+print("\nTable Booking (%):")
+print(table_booking_percent)
+
+print("\nOnline Delivery (%):")
+print(online_delivery_percent)
+
+
+# ---------- PART 2: Average Rating Comparison ----------
+print("\n--- Average Ratings Comparison ---")
+
+table_rating = df.groupby('Has Table booking')['Aggregate rating'].mean()
+online_rating = df.groupby('Has Online delivery')['Aggregate rating'].mean()
+
+print("\nAverage Rating (Table Booking):")
+print(table_rating)
+
+print("\nAverage Rating (Online Delivery):")
+print(online_rating)
+
+
+# ---------- PART 3: Online Delivery vs Price Range ----------
+print("\n--- Online Delivery vs Price Range ---")
+
+delivery_price = df.groupby('Price range')['Has Online delivery'].value_counts(normalize=True) * 100
+
+print(delivery_price)
+
+# ==============================
+# LEVEL 2 - TASK 2
+# Price Range Analysis
+# ==============================
+
+# ---------- PART 1: Price Range Distribution ----------
+print("\n--- Distribution of Price Range ---")
+
+price_dist = df['Price range'].value_counts()
+print(price_dist)
+
+# Optional visualization
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(6,4))
+price_dist.plot(kind='bar')
+plt.title("Distribution of Price Range")
+plt.xlabel("Price Range")
+plt.ylabel("Number of Restaurants")
+plt.show()
+
+
+# ---------- PART 2: Price Range vs Rating ----------
+print("\n--- Average Rating by Price Range ---")
+
+price_rating = df.groupby('Price range')['Aggregate rating'].mean()
+print(price_rating)
+
+# Optional visualization
+plt.figure(figsize=(6,4))
+price_rating.plot(kind='bar')
+plt.title("Price Range vs Average Rating")
+plt.xlabel("Price Range")
+plt.ylabel("Average Rating")
+plt.show()
+
+
+# ---------- PART 3: Price Range across Cities ----------
+print("\n--- Price Range Distribution Across Cities ---")
+
+city_price = df.groupby('City')['Price range'].mean().sort_values(ascending=False).head(10)
+print(city_price)
+
+# ==============================
+# LEVEL 2 - TASK 3
+# Feature Engineering
+# ==============================
+
+print("\n--- Feature Engineering ---")
+
+# ---------- PART 1: Length Features ----------
+df['Name Length'] = df['Restaurant Name'].apply(len)
+df['Address Length'] = df['Address'].apply(len)
+
+print("\nSample Name Length:")
+print(df[['Restaurant Name', 'Name Length']].head())
+
+print("\nSample Address Length:")
+print(df[['Address', 'Address Length']].head())
+
+
+# ---------- PART 2: Encoding Categorical Variables ----------
+df['Table Booking'] = df['Has Table booking'].map({'Yes': 1, 'No': 0})
+df['Online Delivery'] = df['Has Online delivery'].map({'Yes': 1, 'No': 0})
+
+print("\nEncoded Columns Sample:")
+print(df[['Has Table booking', 'Table Booking',
+          'Has Online delivery', 'Online Delivery']].head())
+
+# ==============================
+# LEVEL 3 - TASK 1
+# Regression Model
+# ==============================
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+# ---------- Features & Target ----------
+X = df[['Average Cost for two', 'Price range', 'Votes',
+        'Table Booking', 'Online Delivery']]
+
+y = df['Aggregate rating']
+
+# ---------- Train-Test Split ----------
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+# ---------- Models ----------
+models = {
+    "Linear Regression": LinearRegression(),
+    "Decision Tree": DecisionTreeRegressor(),
+    "Random Forest": RandomForestRegressor()
+}
+
+# ---------- Training & Evaluation ----------
+print("\n--- Model Performance ---")
+
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+
+    print(f"\n{name}:")
+    print("MAE:", mae)
+    print("MSE:", mse)
+    
+# ==============================
+# LEVEL 3 - TASK 2
+# Customer Preference Analysis
+# ==============================
+
+print("\n--- Cuisine Analysis ---")
+
+# DO NOT split again
+# df['Cuisines'] = df['Cuisines'].str.split(', ')  ← remove this
+
+# Only explode
+cuisines_exploded = df.explode('Cuisines')
+
+# ---------- Average Rating ----------
+print("\n--- Average Rating by Cuisine ---")
+cuisine_rating = cuisines_exploded.groupby('Cuisines')['Aggregate rating'].mean().sort_values(ascending=False)
+print(cuisine_rating.head(10))
+
+# ---------- Votes ----------
+print("\n--- Most Popular Cuisines (Votes) ---")
+cuisine_votes = cuisines_exploded.groupby('Cuisines')['Votes'].sum().sort_values(ascending=False)
+print(cuisine_votes.head(10))
+
+# ---------- Count ----------
+print("\n--- Most Common Cuisines ---")
+cuisine_count = cuisines_exploded['Cuisines'].value_counts()
+print(cuisine_count.head(10))
+
+# ==============================
+# LEVEL 3 - TASK 3
+# Data Visualization
+# ==============================
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# ---------- PART 1: Distribution of Ratings ----------
+print("\n--- Rating Distribution ---")
+
+plt.figure(figsize=(6,4))
+plt.hist(df['Aggregate rating'], bins=20)
+plt.title("Distribution of Ratings")
+plt.xlabel("Rating")
+plt.ylabel("Count")
+plt.show()
+
+# Bar plot (rating counts)
+plt.figure(figsize=(6,4))
+df['Aggregate rating'].value_counts().sort_index().plot(kind='bar')
+plt.title("Rating Count")
+plt.xlabel("Rating")
+plt.ylabel("Number of Restaurants")
+plt.show()
+
+
+# ---------- PART 2: Average Rating by City ----------
+print("\n--- Average Rating by City ---")
+
+top_cities = df['City'].value_counts().head(10).index
+city_rating = df[df['City'].isin(top_cities)].groupby('City')['Aggregate rating'].mean()
+
+plt.figure(figsize=(8,5))
+city_rating.sort_values().plot(kind='barh')
+plt.title("Average Rating of Top Cities")
+plt.xlabel("Rating")
+plt.ylabel("City")
+plt.show()
+
+
+# ---------- PART 3: Average Rating by Cuisine ----------
+print("\n--- Average Rating by Cuisine ---")
+
+# Use exploded data from previous task
+cuisine_rating = cuisines_exploded.groupby('Cuisines')['Aggregate rating'
+                                                       ].mean().sort_values(ascending=False).head(10)
+
+plt.figure(figsize=(8,5))
+cuisine_rating.sort_values().plot(kind='barh')
+plt.title("Top Rated Cuisines")
+plt.xlabel("Rating")
+plt.ylabel("Cuisine")
+plt.show()
+
+
+# ---------- PART 4: Feature vs Rating ----------
+print("\n--- Feature Relationships ---")
+
+# Votes vs Rating
+plt.figure(figsize=(6,4))
+plt.scatter(df['Votes'], df['Aggregate rating'])
+plt.title("Votes vs Rating")
+plt.xlabel("Votes")
+plt.ylabel("Rating")
+plt.show()
+
+# Cost vs Rating
+plt.figure(figsize=(6,4))
+plt.scatter(df['Average Cost for two'], df['Aggregate rating'])
+plt.title("Cost vs Rating")
+plt.xlabel("Cost for Two")
+plt.ylabel("Rating")
+plt.show()
+
+# Price Range vs Rating
+plt.figure(figsize=(6,4))
+sns.boxplot(x=df['Price range'], y=df['Aggregate rating'])
+plt.title("Price Range vs Rating")
+plt.show()
