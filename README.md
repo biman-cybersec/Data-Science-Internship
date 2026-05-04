@@ -17,5 +17,11 @@ This repository contains my work from a Data Science Internship.
 - Python Code
 - Level 1, 2, 3 Reports
 
+📊 Visualizations
+/images/(7)distribution of ratings.png
+/images/(10)top rated cuisines.png
+/images/(11)votes vs ratings.png
+/images/(13)price range vs ratings.png
+
 ## 🙋‍♂️ Author
 Biman
