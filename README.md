@@ -21,7 +21,7 @@ This repository contains my work from a Data Science Internship.
 
 ![Rating](images/7ratings.png)
 
-![Rating](images/10toprated.png)
+![Rating](images/5pricerange.png)
 
 ![Rating](images/11votes.png)
 
