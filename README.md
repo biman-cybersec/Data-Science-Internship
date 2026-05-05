@@ -29,3 +29,8 @@ This repository contains my work from a Data Science Internship.
 
 ## 🙋‍♂️ Author
 Biman
+
+## ▶️ How to Run
+=>Install required libraries: 
+pip install pandas matplotlib seaborn scikit-learn
+=>Run the Python file: python code/analysis.py
