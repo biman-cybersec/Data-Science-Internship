@@ -17,7 +17,7 @@ This repository contains my work from a Data Science Internship.
 - Python Code
 - Level 1, 2, 3 Reports
 
-📊 Visualizations
+## 📊 Visualizations
 
 ![Rating](images/7ratings.png)
 
