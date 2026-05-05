@@ -28,7 +28,7 @@ This repository contains my work from a Data Science Internship.
 ![Rating](images/13pricerange.png)
 
 ## 🙋‍♂️ Author
-Biman
+BIMAN SHIL
 
 ## ▶️ How to Run
 =>Install required libraries: 
