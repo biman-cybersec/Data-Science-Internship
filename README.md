@@ -27,10 +27,11 @@ This repository contains my work from a Data Science Internship.
 
 ![Rating](images/13pricerange.png)
 
-## 🙋‍♂️ Author
-BIMAN SHIL
-
 ## ▶️ How to Run
 =>Install required libraries: 
 pip install pandas matplotlib seaborn scikit-learn
+
 =>Run the Python file: python code/analysis.py
+
+## 🙋‍♂️ Author
+BIMAN SHIL
